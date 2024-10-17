@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code Scanner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+</head>
+<body>
+    <h1>QR Code Scanner</h1>
+    <div id="interactive" class="viewport"></div>
+    <script>
+        Quagga.init({
+            inputStream : {
+                name : "Live",
+                type : "LiveStream",
+                target: document.querySelector('#interactive'), // Or '#yourElement' (optional)
+                constraints: {
+                    facingMode: "environment" // Use the rear camera
+                },
+            },
+            decoder : {
+                readers : ["qr_reader"]
+            }
+        }, function(err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            console.log("Initialization finished. Ready to start");
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function(result) {
+            var qrCode = result.codeResult.code;
+            fetch('https://script.google.com/macros/s/AKfycbxbQM8QiLVIasrpRf1e8fJujEC6w6R4dxq42_wI7r1eFRZVZLkqbm4k5GR2ssh16Gsv/exec?q=' + qrCode)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // يمكن عرض البيانات في الصفحة
+                });
+        });
+    </script>
+</body>
+</html>
